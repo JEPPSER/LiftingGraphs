@@ -1,19 +1,18 @@
 package liftinggraphs.entities;
 
-import java.io.File;
 import java.util.ArrayList;
-
-import liftinggraphs.util.WorkoutParser;
 
 public class Exercise {
 
 	private String name;
 	private ArrayList<Workout> workouts;
-
-	public Exercise(String name, File file) {
-		WorkoutParser parser = new WorkoutParser();
+	
+	public Exercise(){
+		workouts = new ArrayList<Workout>();
+	}
+	
+	public void setName(String name){
 		this.name = name;
-		this.workouts = parser.parse(file);
 	}
 
 	public String getName() {
@@ -34,6 +33,10 @@ public class Exercise {
 			}
 		}
 		return result;
+	}
+	
+	public int getNumberOfWorkouts(){
+		return workouts.size();
 	}
 
 	public void addWorkout(Workout workout) {
