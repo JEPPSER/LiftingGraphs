@@ -6,12 +6,12 @@ public class Exercise {
 
 	private String name;
 	private ArrayList<Workout> workouts;
-	
-	public Exercise(){
+
+	public Exercise() {
 		workouts = new ArrayList<Workout>();
 	}
-	
-	public void setName(String name){
+
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -34,8 +34,8 @@ public class Exercise {
 		}
 		return result;
 	}
-	
-	public int getNumberOfWorkouts(){
+
+	public int getNumberOfWorkouts() {
 		return workouts.size();
 	}
 
@@ -45,5 +45,19 @@ public class Exercise {
 
 	public Workout getWorkout(int index) {
 		return workouts.get(index);
+	}
+
+	public String toString() {
+		String result = "";
+		result += this.getName() + "\n";
+		for (int i = 0; i < this.getNumberOfWorkouts(); i++) {
+			result += this.getWorkout(i).getDate().toString() + ": ";
+			for (int j = 0; j < this.getWorkout(i).getNumberOfSets(); j++) {
+				Set set = this.getWorkout(i).getSet(j);
+				result += set.getReps() + "x" + set.getWeight() + "kg, ";
+			}
+			result += "Volume: " + this.getWorkout(i).getVolume() + "\n";
+		}
+		return result;
 	}
 }

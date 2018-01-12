@@ -1,24 +1,17 @@
 package liftinggraphs;
 
-import java.io.File;
+import java.util.ArrayList;
 
 import liftinggraphs.entities.Exercise;
-import liftinggraphs.entities.Set;
-import liftinggraphs.util.WorkoutParser;
+import liftinggraphs.util.ExerciseLoader;
 
 public class LiftingGraphs {
 
 	public static void main(String[] args) {
-		WorkoutParser wp = new WorkoutParser();
-		Exercise ex = wp.parse(new File("C:/Users/JeSpEr/Desktop/Squat Log.txt"));
-		
-		for(int i=0; i<ex.getNumberOfWorkouts(); i++){
-			System.out.print(ex.getWorkout(i).getDate().toString() + ": ");
-			for(int j=0; j<ex.getWorkout(i).getNumberOfSets(); j++){
-				Set set = ex.getWorkout(i).getSet(j);
-				System.out.print(set.getReps() + "x" + set.getWeight() + "kg, ");
-			}
-			System.out.println();
+		ExerciseLoader loader = new ExerciseLoader();
+		ArrayList<Exercise> exercises = loader.load();
+		for (int i = 0; i < exercises.size(); i++) {
+			System.out.println(exercises.get(i));
 		}
 	}
 }
