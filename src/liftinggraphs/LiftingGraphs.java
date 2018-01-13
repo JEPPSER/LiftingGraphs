@@ -1,17 +1,21 @@
 package liftinggraphs;
 
-import java.util.ArrayList;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import liftinggraphs.view.LiftingGraphsView;
 
-import liftinggraphs.entities.Exercise;
-import liftinggraphs.util.ExerciseLoader;
-
-public class LiftingGraphs {
+public class LiftingGraphs extends Application{
 
 	public static void main(String[] args) {
-		ExerciseLoader loader = new ExerciseLoader();
-		ArrayList<Exercise> exercises = loader.load();
-		for (int i = 0; i < exercises.size(); i++) {
-			System.out.println(exercises.get(i));
-		}
+		launch();
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		LiftingGraphsView view = new LiftingGraphsView(primaryStage);
+		Scene scene = new Scene(view);
+		primaryStage.setScene(scene);
+		primaryStage.show();
 	}
 }

@@ -35,6 +35,30 @@ public class Exercise {
 		return result;
 	}
 
+	public double getMaxWeight() {
+		double result = 0;
+		for (int i = 0; i < workouts.size(); i++) {
+			Workout workout = workouts.get(i);
+			for (int j = 0; j < workout.getNumberOfSets(); j++) {
+				Set set = workouts.get(i).getSet(j);
+				if (set.getWeight() > result) {
+					result = set.getWeight();
+				}
+			}
+		}
+		return result;
+	}
+	
+	public int getMaxVolume() {
+		int result = 0;
+		for(int i=0; i<workouts.size(); i++){
+			if(workouts.get(i).getVolume() > result){
+				result = workouts.get(i).getVolume();
+			}
+		}
+		return result;
+	}
+
 	public int getNumberOfWorkouts() {
 		return workouts.size();
 	}
