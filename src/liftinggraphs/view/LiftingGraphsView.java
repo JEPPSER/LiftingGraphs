@@ -20,6 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import liftinggraphs.entities.Exercise;
+import liftinggraphs.entities.Week;
 import liftinggraphs.entities.Workout;
 import liftinggraphs.util.ExerciseLoader;
 
@@ -57,7 +58,8 @@ public class LiftingGraphsView extends ScrollPane {
 			tab.setText(exercises.get(i).getName());
 			tab.setClosable(false);
 			VBox root = new VBox();
-			root.getChildren().add(createVolumeLineChart(exercises.get(i)));
+			root.getChildren().add(createDailyVolumeLineChart(exercises.get(i)));
+			root.getChildren().add(createWeekVolumeLineChart(exercises.get(i)));
 			root.getChildren().add(createRepMaxLineChart(exercises.get(i)));
 			tab.setContent(root);
 			tv.getTabs().add(tab);
@@ -66,7 +68,7 @@ public class LiftingGraphsView extends ScrollPane {
 		super.setContent(vbox);
 	}
 
-	private LineChart<String, Number> createVolumeLineChart(Exercise exercise) {
+	private LineChart<String, Number> createDailyVolumeLineChart(Exercise exercise) {
 		CategoryAxis xAxis = new CategoryAxis();
 		xAxis.setLabel("Workouts");
 		NumberAxis yAxis = new NumberAxis(0, exercise.getMaxVolume() + 1000, 1000);
@@ -74,12 +76,37 @@ public class LiftingGraphsView extends ScrollPane {
 
 		LineChart<String, Number> lineChart = new LineChart<String, Number>(xAxis, yAxis);
 
-		lineChart.setTitle("Volume Line Chart");
+		lineChart.setTitle("Daily Volume Line Chart");
 		XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
 		series.setName("Work Volume");
 		for (int i = 0; i < exercise.getNumberOfWorkouts(); i++) {
 			Workout w = exercise.getWorkout(i);
 			series.getData().add(new XYChart.Data<String, Number>(w.getDate().toString(), w.getVolume()));
+		}
+		lineChart.getData().add(series);
+		return lineChart;
+	}
+	
+	private LineChart<String, Number> createWeekVolumeLineChart(Exercise exercise) {
+		CategoryAxis xAxis = new CategoryAxis();
+		xAxis.setLabel("Weeks");
+		int maxWeekVolume = 0;
+		ArrayList<Week> weeks = exercise.getWeekVolumes();
+		for(int i=0; i < weeks.size(); i++){
+			if(weeks.get(i).getVolume() > maxWeekVolume){
+				maxWeekVolume = weeks.get(i).getVolume();
+			}
+		}
+		NumberAxis yAxis = new NumberAxis(0, maxWeekVolume + 2000, 2000);
+		yAxis.setLabel("Volume");
+
+		LineChart<String, Number> lineChart = new LineChart<String, Number>(xAxis, yAxis);
+
+		lineChart.setTitle("Weekly Volume Line Chart");
+		XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
+		series.setName("Volume");
+		for (int i = 0; i < weeks.size(); i++) {
+			series.getData().add(new XYChart.Data<String, Number>(String.valueOf(weeks.get(i).getWeekNumber()), weeks.get(i).getVolume()));
 		}
 		lineChart.getData().add(series);
 		return lineChart;

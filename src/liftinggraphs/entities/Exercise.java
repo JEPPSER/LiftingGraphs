@@ -1,6 +1,14 @@
 package liftinggraphs.entities;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.IsoFields;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Exercise {
 
@@ -62,7 +70,43 @@ public class Exercise {
 	public int getNumberOfWorkouts() {
 		return workouts.size();
 	}
+	
+	public int getNumberOfWeeks(){
+		int weeks = (int) ChronoUnit.WEEKS.between(workouts.get(0).getDate(), workouts.get(workouts.size() - 1).getDate());
+		return weeks;
+	}
 
+	public ArrayList<Week> getWeekVolumes(){
+		ArrayList<Week> list = new ArrayList<Week>();
+		WeekFields weekFields = WeekFields.of(Locale.getDefault());
+		int currentWeek = workouts.get(0).getDate().get(weekFields.weekOfWeekBasedYear());
+		for(int i=0; i<workouts.size(); i++){
+			int weekNumber = workouts.get(i).getDate().get(weekFields.weekOfWeekBasedYear());
+			int weekVolume = 0;
+			while(weekNumber == currentWeek && i < workouts.size()){
+				weekVolume += workouts.get(i).getVolume();
+				if(i >= workouts.size() - 1){
+					weekNumber = workouts.get(i).getDate().get(weekFields.weekOfWeekBasedYear()) + 1;
+					break;
+				}
+				i++;
+				weekNumber = workouts.get(i).getDate().get(weekFields.weekOfWeekBasedYear());
+			}
+			int prevWeek = weekNumber - 1;
+			if(prevWeek == 0){
+				prevWeek = 52;
+			}
+			Week week = new Week(prevWeek, weekVolume);
+			list.add(week);
+			currentWeek = workouts.get(i).getDate().get(weekFields.weekOfWeekBasedYear());
+			if(i >= workouts.size() - 1){
+				break;
+			}
+			i--;
+		}
+		return list;
+	}
+	
 	public void addWorkout(Workout workout) {
 		workouts.add(workout);
 	}
