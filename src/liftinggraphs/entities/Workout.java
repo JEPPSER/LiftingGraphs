@@ -33,6 +33,25 @@ public class Workout {
 		}
 		return volume;
 	}
+	
+	public boolean containsReps(int reps){
+		for(int i=0; i<this.sets.size(); i++){
+			if(sets.get(i).getReps() == reps){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public double getHeaviestWeight(int reps){
+		double weight = 0;
+		for(int i=0; i<sets.size(); i++){
+			if(sets.get(i).getReps() == reps && sets.get(i).getWeight() > weight){
+				weight = sets.get(i).getWeight();
+			}
+		}
+		return weight;
+	}
 
 	public LocalDate getDate() {
 		return this.date;

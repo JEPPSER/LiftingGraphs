@@ -25,7 +25,7 @@ import liftinggraphs.entities.Workout;
 import liftinggraphs.util.ExerciseLoader;
 
 public class LiftingGraphsView extends ScrollPane {
-	
+
 	private Stage primaryStage;
 
 	public LiftingGraphsView(Stage primaryStage) {
@@ -33,8 +33,8 @@ public class LiftingGraphsView extends ScrollPane {
 		this.primaryStage = primaryStage;
 		updateView();
 	}
-	
-	private void updateView(){
+
+	private void updateView() {
 		ExerciseLoader loader = new ExerciseLoader();
 		ArrayList<Exercise> exercises = loader.load();
 
@@ -61,6 +61,7 @@ public class LiftingGraphsView extends ScrollPane {
 			root.getChildren().add(createDailyVolumeLineChart(exercises.get(i)));
 			root.getChildren().add(createWeekVolumeLineChart(exercises.get(i)));
 			root.getChildren().add(createRepMaxLineChart(exercises.get(i)));
+			root.getChildren().add(this.createCommonRepLineChart(exercises.get(i)));
 			tab.setContent(root);
 			tv.getTabs().add(tab);
 		}
@@ -86,14 +87,14 @@ public class LiftingGraphsView extends ScrollPane {
 		lineChart.getData().add(series);
 		return lineChart;
 	}
-	
+
 	private LineChart<String, Number> createWeekVolumeLineChart(Exercise exercise) {
 		CategoryAxis xAxis = new CategoryAxis();
 		xAxis.setLabel("Weeks");
 		int maxWeekVolume = 0;
 		ArrayList<Week> weeks = exercise.getWeekVolumes();
-		for(int i=0; i < weeks.size(); i++){
-			if(weeks.get(i).getVolume() > maxWeekVolume){
+		for (int i = 0; i < weeks.size(); i++) {
+			if (weeks.get(i).getVolume() > maxWeekVolume) {
 				maxWeekVolume = weeks.get(i).getVolume();
 			}
 		}
@@ -106,7 +107,8 @@ public class LiftingGraphsView extends ScrollPane {
 		XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
 		series.setName("Volume");
 		for (int i = 0; i < weeks.size(); i++) {
-			series.getData().add(new XYChart.Data<String, Number>(String.valueOf(weeks.get(i).getWeekNumber()), weeks.get(i).getVolume()));
+			series.getData().add(new XYChart.Data<String, Number>(String.valueOf(weeks.get(i).getWeekNumber()),
+					weeks.get(i).getVolume()));
 		}
 		lineChart.getData().add(series);
 		return lineChart;
@@ -126,6 +128,28 @@ public class LiftingGraphsView extends ScrollPane {
 		for (int i = 1; i < 12; i++) {
 			if (exercise.getRepMax(i) != 0) {
 				series.getData().add(new XYChart.Data<Number, Number>(i, exercise.getRepMax(i)));
+			}
+		}
+		lineChart.getData().add(series);
+		return lineChart;
+	}
+	
+	private LineChart<String, Number> createCommonRepLineChart(Exercise exercise){
+		CategoryAxis xAxis = new CategoryAxis();
+		xAxis.setLabel("Workouts");
+		NumberAxis yAxis = new NumberAxis(0, exercise.getMaxWeight() + 10, 10);
+		yAxis.setLabel("Weight");
+
+		LineChart<String, Number> lineChart = new LineChart<String, Number>(xAxis, yAxis);
+		int mostCommonReps = exercise.getMostCommonReps();
+
+		lineChart.setTitle(mostCommonReps + " Rep Weight Progression");
+		XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
+		series.setName("Weight");
+		for (int i = 0; i < exercise.getNumberOfWorkouts(); i++) {
+			Workout workout = exercise.getWorkout(i);
+			if (workout.containsReps(mostCommonReps)) {
+				series.getData().add(new XYChart.Data<String, Number>(workout.getDate().toString(), workout.getHeaviestWeight(mostCommonReps)));
 			}
 		}
 		lineChart.getData().add(series);

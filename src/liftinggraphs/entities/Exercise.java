@@ -1,11 +1,6 @@
 package liftinggraphs.entities;
 
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.IsoFields;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -42,6 +37,23 @@ public class Exercise {
 		}
 		return result;
 	}
+	
+	public int getMostCommonReps(){
+		int result = 0;
+		int[] list = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		for(int i=0; i<workouts.size(); i++){
+			Workout workout = workouts.get(i);
+			for(int j=0; j<workout.getNumberOfSets(); j++){
+				list[workout.getSet(j).getReps()]++;
+			}
+		}
+		for(int i=0; i<list.length; i++){
+			if(list[i] > list[result]){
+				result = i;
+			}
+		}
+		return result;
+	}
 
 	public double getMaxWeight() {
 		double result = 0;
@@ -56,11 +68,11 @@ public class Exercise {
 		}
 		return result;
 	}
-	
+
 	public int getMaxVolume() {
 		int result = 0;
-		for(int i=0; i<workouts.size(); i++){
-			if(workouts.get(i).getVolume() > result){
+		for (int i = 0; i < workouts.size(); i++) {
+			if (workouts.get(i).getVolume() > result) {
 				result = workouts.get(i).getVolume();
 			}
 		}
@@ -70,22 +82,23 @@ public class Exercise {
 	public int getNumberOfWorkouts() {
 		return workouts.size();
 	}
-	
-	public int getNumberOfWeeks(){
-		int weeks = (int) ChronoUnit.WEEKS.between(workouts.get(0).getDate(), workouts.get(workouts.size() - 1).getDate());
+
+	public int getNumberOfWeeks() {
+		int weeks = (int) ChronoUnit.WEEKS.between(workouts.get(0).getDate(),
+				workouts.get(workouts.size() - 1).getDate());
 		return weeks;
 	}
 
-	public ArrayList<Week> getWeekVolumes(){
+	public ArrayList<Week> getWeekVolumes() {
 		ArrayList<Week> list = new ArrayList<Week>();
 		WeekFields weekFields = WeekFields.of(Locale.getDefault());
 		int currentWeek = workouts.get(0).getDate().get(weekFields.weekOfWeekBasedYear());
-		for(int i=0; i<workouts.size(); i++){
+		for (int i = 0; i < workouts.size(); i++) {
 			int weekNumber = workouts.get(i).getDate().get(weekFields.weekOfWeekBasedYear());
 			int weekVolume = 0;
-			while(weekNumber == currentWeek && i < workouts.size()){
+			while (weekNumber == currentWeek && i < workouts.size()) {
 				weekVolume += workouts.get(i).getVolume();
-				if(i >= workouts.size() - 1){
+				if (i >= workouts.size() - 1) {
 					weekNumber = workouts.get(i).getDate().get(weekFields.weekOfWeekBasedYear()) + 1;
 					break;
 				}
@@ -93,20 +106,20 @@ public class Exercise {
 				weekNumber = workouts.get(i).getDate().get(weekFields.weekOfWeekBasedYear());
 			}
 			int prevWeek = weekNumber - 1;
-			if(prevWeek == 0){
+			if (prevWeek == 0) {
 				prevWeek = 52;
 			}
 			Week week = new Week(prevWeek, weekVolume);
 			list.add(week);
 			currentWeek = workouts.get(i).getDate().get(weekFields.weekOfWeekBasedYear());
-			if(i >= workouts.size() - 1){
+			if (i >= workouts.size() - 1) {
 				break;
 			}
 			i--;
 		}
 		return list;
 	}
-	
+
 	public void addWorkout(Workout workout) {
 		workouts.add(workout);
 	}
